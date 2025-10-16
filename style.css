@@ -365,6 +365,7 @@ body {
 
 .chart-text li {
     margin: 0.25rem 0;
+    line-height: 1.8;
 }
 
 .chart-text strong {
@@ -374,6 +375,37 @@ body {
 
 .chart-text em {
     font-style: italic;
+}
+
+/* Infographic enhancements */
+.chart-text p:first-child {
+    font-size: 1.05rem;
+    color: #444;
+    margin-bottom: 1rem;
+    line-height: 1.7;
+}
+
+.chart-text ul li {
+    background: linear-gradient(90deg, #f0f7ff 0%, transparent 100%);
+    padding: 0.5rem 0.75rem;
+    margin: 0.5rem 0;
+    border-left: 3px solid #007bff;
+    border-radius: 4px;
+}
+
+/* Content images */
+.content-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    display: block;
+}
+
+.chart-text .content-image {
+    max-width: 300px;
+    margin: 0.75rem auto;
 }
 
 .chart-canvas-wrapper {

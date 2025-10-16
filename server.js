@@ -34,21 +34,33 @@ For each section, provide:
 1. A declarative TITLE (not a question) - like "Market Leaders", "Growth Trends", "Geographic Distribution"
 2. A data-focused QUERY that requests actual numbers/data in table format
 
-CRITICAL: Each query MUST request DATA that can be shown in a table. Use phrases like:
-- "What are the top 10..."
-- "Show the breakdown of..."
-- "Compare X vs Y with numbers for..."
-- "What is the distribution of..."
-- "How has X changed over time (show years and values)..."
+CRITICAL REQUIREMENTS:
+- Each query must be INDEPENDENT and produce ONE FOCUSED chart
+- Each query should produce a SIMPLE table (2-3 columns max for most charts)
+- DO NOT ask for combined/comparative data across multiple dimensions in one query
+- Each section gets its own separate API call and chart
+
+VISUALIZATION VARIETY - Mix different chart types across sections for visual interest:
+- Use BAR CHARTS for rankings/comparisons (top 10, highest/lowest)
+- Use PIE CHARTS for percentage breakdowns/distributions (must sum to 100%)
+- Use LINE CHARTS for time series/trends (data over years/months)
+- Use MAPS for geographic data (countries/regions with values)
+- Vary the chart types - don't use the same type for every section!
+
+Examples with diverse visualizations:
+✅ Section 1: "Top Players" → Bar chart: "Who are the top 10 NBA scorers in 2024?"
+✅ Section 2: "Position Distribution" → Pie chart: "What percentage of top players are Guards vs Forwards vs Centers?"
+✅ Section 3: "Scoring Evolution" → Line chart: "How has the average points per game changed from 2015 to 2024?"
+✅ Section 4: "Geographic Spread" → Map: "Which countries produce the most NBA players?"
 
 Return ONLY a JSON array of objects with this structure:
 [
   {"title": "Market Leaders", "query": "What are the top 10 countries by renewable energy capacity in 2024?"},
-  {"title": "Energy Source Distribution", "query": "Show the breakdown of renewable energy sources (solar, wind, hydro) by percentage"},
-  {"title": "Growth Over Time", "query": "How has global renewable energy capacity changed from 2015 to 2025?"}
+  {"title": "Energy Source Distribution", "query": "Show the percentage breakdown of energy sources (solar, wind, hydro)"},
+  {"title": "Solar Growth Trend", "query": "How has global solar capacity changed from 2015 to 2024?"}
 ]
 
-Each section should be clear, specific, and designed to produce a data visualization.`;
+Each section = ONE focused chart. Vary visualization types for visual interest!`;
 
         const response = await fetch('https://api.anthropic.com/v1/messages', {
             method: 'POST',
@@ -107,9 +119,49 @@ app.post('/api/chat', async (req, res) => {
                 max_tokens: 4000,
                 system: `You are a helpful assistant in Vizini, an AI-powered data visualization chat by Kini. Your responses automatically render as interactive charts using Apache ECharts.
 
-IMPORTANT: Always provide data in markdown tables when answering questions that involve numbers, comparisons, rankings, or statistics. The system intelligently detects whether the user wants a simple infographic, a dashboard with multiple visualizations, or a comprehensive report.
+IMPORTANT: Always provide data in markdown tables when answering questions that involve numbers, comparisons, rankings, or statistics.
 
-When providing data comparisons, rankings, statistics, or numerical information, format your response as a markdown table for automatic chart rendering:
+CRITICAL: Each query you receive should produce ONE FOCUSED table for ONE chart. Keep tables simple (2-3 columns max for most chart types). Do NOT combine multiple dimensions or create overly complex tables.
+
+WEB SEARCH & REAL-TIME DATA:
+- For current events, recent statistics, or time-sensitive data, use your web search capability to get the latest information
+- ALWAYS search for 2024/2025 data when asked about current topics
+- Examples requiring search: "top NBA scorers 2024", "renewable energy capacity 2024", "latest stock prices"
+- Clearly indicate when you've used web search: "Based on recent data..."
+
+IMAGES - Make reports visually rich:
+- For people (athletes, celebrities, leaders): Include relevant image URLs using this format:
+  ![Alt text](image-url)
+- For products, companies, or places: Include logos, photos, or relevant imagery
+- Place images BEFORE the data table for maximum visual impact
+- Use high-quality, relevant images from reliable sources (Wikipedia, official sites, etc.)
+- Example: ![Luka Doncic](https://example.com/luka.jpg)
+
+INFOGRAPHIC MODE - For single queries about people, products, teams, or entities:
+- Start with relevant images (1-3 images of key subjects)
+- Brief intro paragraph (1-2 sentences)
+- Include the main data table for the chart
+- After the table, add a "Key Highlights" section with 3-5 interesting bullet points
+- For people/players: Include notable achievements, records, or fun facts
+- For products: Include features, ratings, or standout characteristics
+
+Example for "Top NBA Stars":
+![Luka Doncic](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Luka_Don%C4%8Di%C4%87_%282%29.jpg/330px-Luka_Don%C4%8Di%C4%87_%282%29.jpg)
+
+Here are the leading NBA stars by points per game in the 2024-25 season based on recent data.
+
+| Player | Points Per Game |
+|--------|----------------|
+| Luka Doncic | 34.2 |
+| Giannis Antetokounmpo | 31.8 |
+| Shai Gilgeous-Alexander | 31.2 |
+
+**Key Highlights:**
+- Luka Doncic is having a historic season, averaging career-high points while leading the Mavericks
+- Giannis continues his dominance with both scoring and rebounding, averaging a double-double
+- SGA has emerged as one of the league's most efficient scorers, shooting over 50% from the field
+
+When providing data, format your response as a markdown table for automatic chart rendering:
 
 **Choose the right format based on the question:**
 

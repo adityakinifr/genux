@@ -93,8 +93,8 @@ function addMessage(content, type) {
             console.log('✅ RENDERING CHART with data:', chartData);
             renderChart(messageDiv, chartData, content);
         } else {
-            console.log('❌ No chart detected - displaying as text');
-            messageDiv.textContent = content;
+            console.log('❌ No chart detected - displaying as formatted text');
+            messageDiv.innerHTML = formatText(content);
         }
         console.log('=== CHART DETECTION END ===');
     } else {
@@ -231,7 +231,10 @@ function parseTableData(text) {
 
     const headers = lines[0].split('|').map(h => h.trim()).filter(h => h);
     const dataRows = lines.slice(2).map(line =>
-        line.split('|').map(cell => cell.trim()).filter(cell => cell)
+        line.split('|').map(cell => cell.trim()).filter(cell => {
+            // Filter out empty cells and separator cells (lines with only dashes, colons, spaces)
+            return cell && !cell.match(/^[-:\s]+$/);
+        })
     );
 
     if (headers.length >= 2 && dataRows.length >= 1) {
@@ -1336,6 +1339,9 @@ function renderMap(container, chartData, originalText) {
 }
 
 function formatText(text) {
+    // Convert markdown images to HTML (before other conversions to avoid conflicts)
+    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="content-image" />');
+
     // Convert markdown headers to HTML
     text = text.replace(/^### (.+)$/gm, '<h4>$1</h4>');
     text = text.replace(/^## (.+)$/gm, '<h3>$1</h3>');
@@ -1492,7 +1498,6 @@ async function sendToClaude(message) {
             });
 
             tocHTML += `</ol>`;
-            tocHTML += `<div class="toc-footer">${sections.length} sections</div>`;
 
             reportHeaderDiv.innerHTML = tocHTML;
             messagesContainer.appendChild(reportHeaderDiv);
@@ -1512,7 +1517,7 @@ async function sendToClaude(message) {
                 const headerDiv = document.createElement('div');
                 headerDiv.classList.add('message', 'section-header');
                 headerDiv.id = `section-${i}`;
-                headerDiv.innerHTML = `<strong>Section ${i + 1}: ${section.title}</strong>`;
+                headerDiv.innerHTML = `<strong>${section.title}</strong>`;
                 messagesContainer.appendChild(headerDiv);
 
                 // Add loading indicator
