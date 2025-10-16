@@ -1,8 +1,9 @@
 {
-  "name": "claude-chat-app",
+  "name": "vizini",
   "version": "1.0.0",
-  "description": "A local Claude chat application",
+  "description": "Vizini - AI-powered data visualization chat by Kini. Automatically converts data into beautiful charts, graphs, and maps.",
   "main": "server.js",
+  "author": "Kini",
   "scripts": {
     "start": "node server.js",
     "dev": "node server.js"

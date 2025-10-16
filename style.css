@@ -32,6 +32,16 @@ body {
 .header h1 {
     color: #333;
     font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+}
+
+.header h1::after {
+    content: ' by Kini';
+    font-size: 0.7rem;
+    color: #888;
+    font-weight: 400;
+    margin-left: 8px;
 }
 
 .settings-btn {
@@ -129,6 +139,15 @@ body {
     line-height: 1.4;
 }
 
+.message.assistant.has-chart {
+    max-width: 95%;
+    width: 95%;
+    padding: 0;
+    background: transparent;
+    border: none;
+    overflow: visible;
+}
+
 .message.user {
     align-self: flex-end;
     background: #007bff;
@@ -147,6 +166,104 @@ body {
     background: #f8d7da;
     color: #721c24;
     border: 1px solid #f5c6cb;
+}
+
+.message.report-header {
+    align-self: flex-start;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    max-width: 95%;
+    width: 95%;
+    margin-top: 1rem;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.report-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.toc-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.toc-list {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    margin: 0.75rem 0;
+}
+
+.toc-list li {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+}
+
+.toc-list a {
+    color: white;
+    text-decoration: none;
+    transition: all 0.2s;
+    opacity: 0.9;
+}
+
+.toc-list a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.toc-footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 2px solid rgba(255, 255, 255, 0.3);
+    text-align: center;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.message.section-header {
+    align-self: flex-start;
+    background: #e7f3ff;
+    color: #0056b3;
+    border-left: 4px solid #007bff;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    max-width: 95%;
+    margin-top: 1.5rem;
+    scroll-margin-top: 20px;
+}
+
+.message.loading-indicator {
+    align-self: flex-start;
+    background: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    max-width: 95%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.loading-spinner {
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #ffc107;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .input-container {
@@ -201,34 +318,97 @@ body {
 }
 
 .chart-container {
-    margin: 1rem 0;
     background: white;
     border-radius: 8px;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    max-width: 100%;
     width: 100%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .chart-text {
     padding: 1rem;
     background: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-    font-size: 0.9rem;
-    color: #495057;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-    max-height: 200px;
-    overflow-y: auto;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+    color: #333;
+    line-height: 1.6;
+}
+
+.chart-text h2 {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+    color: #222;
+}
+
+.chart-text h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+    color: #333;
+    border-left: 4px solid #007bff;
+    padding-left: 0.75rem;
+    margin-top: 1rem;
+}
+
+.chart-text h4 {
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+    color: #444;
+}
+
+.chart-text ul {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.chart-text li {
+    margin: 0.25rem 0;
+}
+
+.chart-text strong {
+    font-weight: 600;
+    color: #222;
+}
+
+.chart-text em {
+    font-style: italic;
+}
+
+.chart-canvas-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 350px;
+    max-height: 500px;
+    height: auto;
 }
 
 .chart-container canvas {
-    display: block;
-    padding: 1rem;
-    background: white;
-    width: 100% !important;
-    height: 300px !important;
-    max-height: 300px !important;
+    display: block !important;
+    max-width: 100% !important;
+    max-height: 500px !important;
+}
+
+.map-canvas {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.map-legend {
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.heatmap-grid {
+    margin: 1rem 0;
+}
+
+.heatmap-grid table {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .message.assistant .chart-container {
@@ -237,7 +417,23 @@ body {
 }
 
 .message {
-    overflow: hidden;
+    overflow: visible;
+}
+
+/* Dashboard and Report styling */
+.message.assistant .chart-text h3:first-child {
+    margin-top: 0;
+}
+
+.message.assistant + .message.assistant {
+    margin-top: 1.5rem;
+}
+
+/* Multi-chart section divider */
+.chart-container + .chart-container {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px dashed #e9ecef;
 }
 
 @media (max-width: 600px) {
