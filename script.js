@@ -1339,8 +1339,30 @@ function renderMap(container, chartData, originalText) {
 }
 
 function formatText(text) {
+    console.log('🖼️ formatText input:', text.substring(0, 500));
+
     // Convert markdown images to HTML (before other conversions to avoid conflicts)
-    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="content-image" />');
+    const imageMatches = text.match(/!\[([^\]]*)\]\(([^)]+)\)/g);
+    console.log('🖼️ Found image patterns:', imageMatches);
+
+    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+        console.log('🖼️ Converting image:', { match, alt, url });
+        
+        // Clean and process URL
+        let cleanUrl = processImageUrl(url.trim());
+        
+        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://') && !cleanUrl.startsWith('data:')) {
+            console.warn('⚠️ Image URL does not start with http/https/data:', cleanUrl);
+        }
+        
+        return `<img src="${cleanUrl}" alt="${alt || 'Image'}" class="content-image" 
+                     onerror="handleImageError(this, '${cleanUrl}');" 
+                     onload="handleImageLoad(this, '${cleanUrl}');" 
+                     loading="lazy" 
+                     style="opacity: 0.7;" />`;
+    });
+
+    console.log('🖼️ formatText output:', text.substring(0, 500));
 
     // Convert markdown headers to HTML
     text = text.replace(/^### (.+)$/gm, '<h4>$1</h4>');
@@ -1361,6 +1383,68 @@ function formatText(text) {
     return text;
 }
 
+// Image loading helper functions
+function handleImageError(img, url) {
+    console.error('❌ Failed to load image:', url);
+    img.style.display = 'none';
+    
+    // Create a placeholder div with error message
+    const placeholder = document.createElement('div');
+    placeholder.className = 'image-error-placeholder';
+    placeholder.innerHTML = `
+        <div style="
+            background: #f8f9fa; 
+            border: 2px dashed #dee2e6; 
+            border-radius: 8px; 
+            padding: 1rem; 
+            text-align: center; 
+            color: #6c757d; 
+            font-size: 0.9rem;
+            margin: 1rem 0;
+        ">
+            <div>🖼️ Image could not be loaded</div>
+            <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">${url}</div>
+        </div>
+    `;
+    
+    img.parentNode.insertBefore(placeholder, img);
+}
+
+function handleImageLoad(img, url) {
+    console.log('✅ Successfully loaded image:', url);
+    img.style.opacity = '1';
+}
+
+// Preload images to check if they're accessible
+function preloadImage(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(url);
+        img.onerror = () => reject(new Error(`Failed to load: ${url}`));
+        img.src = url;
+    });
+}
+
+// Enhanced image processing for better compatibility
+function processImageUrl(url) {
+    // Handle common image hosting services
+    if (url.includes('wikipedia.org')) {
+        // Wikipedia images often need specific handling
+        return url;
+    }
+    
+    // Handle relative URLs
+    if (url.startsWith('//')) {
+        return 'https:' + url;
+    }
+    
+    // Handle protocol-relative URLs
+    if (url.startsWith('/')) {
+        return window.location.origin + url;
+    }
+    
+    return url;
+}
 
 function showTypingIndicator() {
     if (isTyping) return;
