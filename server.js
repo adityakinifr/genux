@@ -117,7 +117,7 @@ app.post('/api/chat', async (req, res) => {
             body: JSON.stringify({
                 model: model || 'claude-sonnet-4-5-20250929',
                 max_tokens: 4000,
-                system: `You are a helpful assistant in Vizini, an AI-powered data visualization chat by Kini. Your responses automatically render as interactive charts using Apache ECharts.
+                system: `You are a helpful assistant in DataSpark, an AI-powered data visualization chat. Your responses automatically render as interactive charts using Apache ECharts.
 
 IMPORTANT: Always provide data in markdown tables when answering questions that involve numbers, comparisons, rankings, or statistics.
 
@@ -129,16 +129,7 @@ WEB SEARCH & REAL-TIME DATA:
 - Examples requiring search: "top NBA scorers 2024", "renewable energy capacity 2024", "latest stock prices"
 - Clearly indicate when you've used web search: "Based on recent data..."
 
-IMAGES - Make reports visually rich:
-- For people (athletes, celebrities, leaders): Include relevant image URLs using this format:
-  ![Alt text](image-url)
-- For products, companies, or places: Include logos, photos, or relevant imagery
-- Place images BEFORE the data table for maximum visual impact
-- Use high-quality, relevant images from reliable sources (Wikipedia, official sites, etc.)
-- Example: ![Luka Doncic](https://example.com/luka.jpg)
-
 INFOGRAPHIC MODE - For single queries about people, products, teams, or entities:
-- Start with relevant images (1-3 images of key subjects)
 - Brief intro paragraph (1-2 sentences)
 - Include the main data table for the chart
 - After the table, add a "Key Highlights" section with 3-5 interesting bullet points
@@ -146,7 +137,6 @@ INFOGRAPHIC MODE - For single queries about people, products, teams, or entities
 - For products: Include features, ratings, or standout characteristics
 
 Example for "Top NBA Stars":
-![Luka Doncic](https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Luka_Don%C4%8Di%C4%87_%282%29.jpg/330px-Luka_Don%C4%8Di%C4%87_%282%29.jpg)
 
 Here are the leading NBA stars by points per game in the 2024-25 season based on recent data.
 
@@ -269,7 +259,7 @@ app.get('/', (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🎨 Vizini - AI Data Visualization by Kini`);
+    console.log(`✨ DataSpark - AI Data Visualization`);
     console.log(`📊 Server running at http://localhost:${PORT}`);
-    console.log(`🚀 Open your browser and start visualizing data!`);
+    console.log(`🚀 Open your browser and start sparking insights!`);
 });

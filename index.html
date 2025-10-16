@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vizini - AI Data Visualization by Kini</title>
+    <title>DataSpark - AI Data Visualization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
@@ -12,7 +15,7 @@
 <body>
     <div class="app-container">
         <header class="header">
-            <h1>📊 Vizini</h1>
+            <h1>DataSpark</h1>
             <button class="settings-btn" onclick="toggleSettings()">⚙️</button>
         </header>
 
@@ -38,8 +41,11 @@
         <div class="chat-container">
             <div class="messages" id="messages"></div>
             <div class="input-container">
-                <input type="text" id="messageInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
-                <button onclick="sendMessage()">Send</button>
+                <input type="text" id="messageInput" placeholder="Ask me anything about data..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()" class="send-btn">
+                    <span class="send-text">Send</span>
+                    <span class="send-icon">➤</span>
+                </button>
             </div>
         </div>
     </div>

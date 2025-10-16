@@ -1339,31 +1339,6 @@ function renderMap(container, chartData, originalText) {
 }
 
 function formatText(text) {
-    console.log('🖼️ formatText input:', text.substring(0, 500));
-
-    // Convert markdown images to HTML (before other conversions to avoid conflicts)
-    const imageMatches = text.match(/!\[([^\]]*)\]\(([^)]+)\)/g);
-    console.log('🖼️ Found image patterns:', imageMatches);
-
-    text = text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
-        console.log('🖼️ Converting image:', { match, alt, url });
-        
-        // Clean and process URL
-        let cleanUrl = processImageUrl(url.trim());
-        
-        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://') && !cleanUrl.startsWith('data:')) {
-            console.warn('⚠️ Image URL does not start with http/https/data:', cleanUrl);
-        }
-        
-        return `<img src="${cleanUrl}" alt="${alt || 'Image'}" class="content-image" 
-                     onerror="handleImageError(this, '${cleanUrl}');" 
-                     onload="handleImageLoad(this, '${cleanUrl}');" 
-                     loading="lazy" 
-                     style="opacity: 0.7;" />`;
-    });
-
-    console.log('🖼️ formatText output:', text.substring(0, 500));
-
     // Convert markdown headers to HTML
     text = text.replace(/^### (.+)$/gm, '<h4>$1</h4>');
     text = text.replace(/^## (.+)$/gm, '<h3>$1</h3>');
@@ -1383,67 +1358,102 @@ function formatText(text) {
     return text;
 }
 
-// Image loading helper functions
-function handleImageError(img, url) {
-    console.error('❌ Failed to load image:', url);
-    img.style.display = 'none';
+// Generate dynamic report titles based on content
+function generateReportTitle(message, intent, sections) {
+    const lowerMessage = message.toLowerCase();
     
-    // Create a placeholder div with error message
-    const placeholder = document.createElement('div');
-    placeholder.className = 'image-error-placeholder';
-    placeholder.innerHTML = `
-        <div style="
-            background: #f8f9fa; 
-            border: 2px dashed #dee2e6; 
-            border-radius: 8px; 
-            padding: 1rem; 
-            text-align: center; 
-            color: #6c757d; 
-            font-size: 0.9rem;
-            margin: 1rem 0;
-        ">
-            <div>🖼️ Image could not be loaded</div>
-            <div style="font-size: 0.8rem; margin-top: 0.5rem; opacity: 0.7;">${url}</div>
-        </div>
-    `;
+    // Extract key topics from the message
+    const topics = extractTopics(message);
+    const mainTopic = topics[0] || 'Data Analysis';
     
-    img.parentNode.insertBefore(placeholder, img);
-}
-
-function handleImageLoad(img, url) {
-    console.log('✅ Successfully loaded image:', url);
-    img.style.opacity = '1';
-}
-
-// Preload images to check if they're accessible
-function preloadImage(url) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(url);
-        img.onerror = () => reject(new Error(`Failed to load: ${url}`));
-        img.src = url;
-    });
-}
-
-// Enhanced image processing for better compatibility
-function processImageUrl(url) {
-    // Handle common image hosting services
-    if (url.includes('wikipedia.org')) {
-        // Wikipedia images often need specific handling
-        return url;
+    // Generate contextual titles based on intent and content
+    if (intent.type === 'report') {
+        if (lowerMessage.includes('nba') || lowerMessage.includes('basketball')) {
+            return `🏀 NBA ${mainTopic} Report`;
+        } else if (lowerMessage.includes('football') || lowerMessage.includes('soccer')) {
+            return `⚽ Football ${mainTopic} Report`;
+        } else if (lowerMessage.includes('crypto') || lowerMessage.includes('bitcoin')) {
+            return `₿ Cryptocurrency ${mainTopic} Report`;
+        } else if (lowerMessage.includes('stock') || lowerMessage.includes('market')) {
+            return `📈 Market ${mainTopic} Report`;
+        } else if (lowerMessage.includes('tech') || lowerMessage.includes('technology')) {
+            return `💻 Technology ${mainTopic} Report`;
+        } else if (lowerMessage.includes('climate') || lowerMessage.includes('environment')) {
+            return `🌍 Climate ${mainTopic} Report`;
+        } else if (lowerMessage.includes('economy') || lowerMessage.includes('economic')) {
+            return `💰 Economic ${mainTopic} Report`;
+        } else if (lowerMessage.includes('health') || lowerMessage.includes('medical')) {
+            return `🏥 Health ${mainTopic} Report`;
+        } else if (lowerMessage.includes('education') || lowerMessage.includes('school')) {
+            return `🎓 Education ${mainTopic} Report`;
+        } else if (lowerMessage.includes('energy') || lowerMessage.includes('renewable')) {
+            return `⚡ Energy ${mainTopic} Report`;
+        } else {
+            return `📊 ${mainTopic} Analysis Report`;
+        }
+    } else if (intent.type === 'dashboard') {
+        if (lowerMessage.includes('compare') || lowerMessage.includes('comparison')) {
+            return `📊 ${mainTopic} Comparison Dashboard`;
+        } else if (lowerMessage.includes('overview') || lowerMessage.includes('summary')) {
+            return `📈 ${mainTopic} Overview Dashboard`;
+        } else {
+            return `📊 ${mainTopic} Dashboard`;
+        }
     }
     
-    // Handle relative URLs
-    if (url.startsWith('//')) {
-        return 'https:' + url;
+    return `📊 ${mainTopic} Analysis`;
+}
+
+// Generate engaging TOC titles
+function generateTocTitle(intent, sectionCount) {
+    const tocTitles = {
+        report: [
+            '📋 What You\'ll Discover',
+            '📚 Key Insights Ahead',
+            '🔍 Analysis Breakdown',
+            '📖 Report Sections',
+            '🎯 What\'s Inside'
+        ],
+        dashboard: [
+            '📊 Dashboard Overview',
+            '📈 Key Metrics',
+            '🔍 Data Breakdown',
+            '📋 Dashboard Sections',
+            '🎯 What\'s Covered'
+        ]
+    };
+    
+    const titles = tocTitles[intent.type] || tocTitles.report;
+    return titles[Math.floor(Math.random() * titles.length)];
+}
+
+// Extract key topics from the message
+function extractTopics(message) {
+    const words = message.toLowerCase()
+        .replace(/[^\w\s]/g, ' ')
+        .split(/\s+/)
+        .filter(word => word.length > 3);
+    
+    // Common topic keywords
+    const topicKeywords = [
+        'nba', 'basketball', 'football', 'soccer', 'crypto', 'bitcoin', 'stock', 'market',
+        'tech', 'technology', 'climate', 'environment', 'economy', 'economic', 'health',
+        'medical', 'education', 'school', 'energy', 'renewable', 'solar', 'wind',
+        'population', 'demographics', 'sales', 'revenue', 'profit', 'growth', 'trends',
+        'companies', 'brands', 'products', 'services', 'countries', 'cities', 'regions'
+    ];
+    
+    const foundTopics = words.filter(word => topicKeywords.includes(word));
+    
+    if (foundTopics.length > 0) {
+        return foundTopics.map(topic => 
+            topic.charAt(0).toUpperCase() + topic.slice(1)
+        );
     }
     
-    // Handle protocol-relative URLs
-    if (url.startsWith('/')) {
-        return window.location.origin + url;
-    }
-    
-    return url;
+    // Fallback: extract capitalized words
+    const capitalizedWords = message.match(/\b[A-Z][a-z]+\b/g) || [];
+    return capitalizedWords.slice(0, 2);
 }
 
 function showTypingIndicator() {
@@ -1565,16 +1575,27 @@ async function sendToClaude(message) {
         console.log('📋 Sections:', sections);
 
         // Show intent to user with table of contents
+        console.log('🎯 Checking TOC conditions:', {
+            intentType: intent.type,
+            sectionsLength: sections.length,
+            shouldShowTOC: intent.type !== 'infographic' && sections.length > 1
+        });
+
         if (intent.type !== 'infographic' && sections.length > 1) {
+            console.log('✅ Creating TOC with sections:', sections);
+
             // Create report header with table of contents
             const messagesContainer = document.getElementById('messages');
 
             const reportHeaderDiv = document.createElement('div');
             reportHeaderDiv.classList.add('message', 'report-header');
 
-            let reportTitle = intent.type === 'report' ? '📄 Report' : '📊 Dashboard';
+            // Generate dynamic report title based on query content
+            const reportTitle = generateReportTitle(message, intent, sections);
+            const tocTitle = generateTocTitle(intent, sections.length);
+
             let tocHTML = `<div class="report-title">${reportTitle}</div>`;
-            tocHTML += `<div class="toc-title">Table of Contents</div>`;
+            tocHTML += `<div class="toc-title">${tocTitle}</div>`;
             tocHTML += `<ol class="toc-list">`;
 
             sections.forEach((section, idx) => {
@@ -1583,9 +1604,13 @@ async function sendToClaude(message) {
 
             tocHTML += `</ol>`;
 
+            console.log('📋 TOC HTML:', tocHTML);
             reportHeaderDiv.innerHTML = tocHTML;
             messagesContainer.appendChild(reportHeaderDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            console.log('✅ TOC appended to messages container');
+        } else {
+            console.log('❌ TOC not shown - conditions not met');
         }
 
         // Process each section

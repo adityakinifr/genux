@@ -1,7 +1,7 @@
 {
-  "name": "vizini",
+  "name": "dataspark",
   "version": "1.0.0",
-  "description": "Vizini - AI-powered data visualization chat by Kini. Automatically converts data into beautiful charts, graphs, and maps.",
+  "description": "DataSpark - AI-powered data visualization chat. Spark brilliant insights by automatically converting questions into interactive charts, graphs, and maps.",
   "main": "server.js",
   "author": "Kini",
   "scripts": {
